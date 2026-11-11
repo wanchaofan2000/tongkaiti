@@ -1,0 +1,31 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+\documentclass[UTF8,a4paper,12pt,fontset=fandol]{ctexart}
+\input{preamble}
+
+\title{硕士学位论文开题报告\\[1em]\large\TODO{论文题目}}
+\author{\TODO{姓名}\quad\TODO{学号}\\[0.5em]
+  指导教师：\TODO{导师姓名}\\[0.5em]
+  研究方向：\TODO{研究方向}}
+\date{\TODO{开题日期}}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\maketitle
+\thispagestyle{empty}
+\clearpage
+
+\pagenumbering{Roman}
+\hypersetup{pageanchor=true}
+\input{sections/abstract}
+\clearpage
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+\input{sections/introduction}
+\input{sections/research_status}
+\input{sections/research_plan}
+\input{sections/work_plan}
+\input{sections/references}
+\end{document}

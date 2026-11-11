@@ -1,0 +1,17 @@
+% 公共宏包与自定义命令
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{references.bib}
+\usepackage[hidelinks]{hyperref}
+\ctexset{
+  section = {name = {,、}, number = \chinese{section}},
+  subsection = {name = {（,）}, number = \chinese{subsection}}
+}
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{2}
+\newcommand{\TODO}[1]{\textbf{【TODO：#1】}}
