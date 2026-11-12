@@ -7,6 +7,7 @@
   "latex-workshop.latex.autoBuild.run": "onSave",
   "latex-workshop.view.pdf.viewer": "tab",
   "latex-workshop.latex.recipe.default": "first",
+  "latex-workshop.latex.build.forceRecipeUsage": true,
   "latex-workshop.latex.tools": [
     {
       "name": "latexmk-xelatex",
