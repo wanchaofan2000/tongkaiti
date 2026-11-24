@@ -1,0 +1,78 @@
+This is BibTeX, Version 0.99e (TeX Live 2026)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: def/GBT7714-2015-NoWarning.bst.bst
+Database file #1: ref.bib
+Warning--entry type for "CPCC2017_Ipe" isn't style-file defined
+--line 861 of file ref.bib
+Warning--entry type for "CPCC2017_Plan" isn't style-file defined
+--line 868 of file ref.bib
+Warning--entry type for "MOE2017_Gangyao" isn't style-file defined
+--line 875 of file ref.bib
+Warning--entry type for "Xi2018_Speech" isn't style-file defined
+--line 882 of file ref.bib
+Warning--entry type for "CPCC2019_Yijian" isn't style-file defined
+--line 889 of file ref.bib
+Warning--entry type for "MOE2020_Gangshen" isn't style-file defined
+--line 896 of file ref.bib
+Warning--entry type for "CPCC2021_Yijian" isn't style-file defined
+--line 903 of file ref.bib
+Warning--entry type for "MOE2022_Fangan" isn't style-file defined
+--line 910 of file ref.bib
+Warning--entry type for "CPCC2024_Jueding" isn't style-file defined
+--line 999 of file ref.bib
+Warning--entry type for "CPCC2025_Gangyao" isn't style-file defined
+--line 1006 of file ref.bib
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Warning--empty year in CPCC2017_Ipe
+Warning--empty year in Xi2018_Speech
+Warning--empty year in CPCC2021_Yijian
+Warning--empty year in CPCC2024_Jueding
+Warning--empty year in CPCC2025_Gangyao
+Warning--empty year in CPCC2017_Plan
+Warning--empty year in CPCC2019_Yijian
+Warning--empty year in MOE2017_Gangyao
+Warning--empty year in MOE2020_Gangshen
+Warning--empty year in MOE2022_Fangan
+You've used 101 entries,
+            3430 wiz_defined-function locations,
+            1444 strings with 20795 characters,
+and the built_in function-call counts, 339521 in all, are:
+= -- 42149
+> -- 30104
+< -- 30802
++ -- 12536
+- -- 562
+* -- 2704
+:= -- 41797
+add.period$ -- 347
+call.type$ -- 101
+change.case$ -- 202
+chr.to.int$ -- 10465
+cite$ -- 112
+duplicate$ -- 2076
+empty$ -- 5327
+format.name$ -- 916
+if$ -- 98568
+int.to.chr$ -- 2
+int.to.str$ -- 102
+missing$ -- 0
+newline$ -- 558
+num.names$ -- 289
+pop$ -- 963
+preamble$ -- 1
+purify$ -- 101
+quote$ -- 0
+skip$ -- 41654
+stack$ -- 0
+substring$ -- 12830
+swap$ -- 167
+text.length$ -- 758
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 800
+warning$ -- 10
+while$ -- 995
+width$ -- 0
+write$ -- 1523
+(There were 20 warnings)

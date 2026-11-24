@@ -1,31 +1,91 @@
 % !TeX program = xelatex
-% !TeX encoding = UTF-8
-\documentclass[UTF8,a4paper,12pt,fontset=fandol]{ctexart}
-\input{preamble}
+\PassOptionsToPackage{hypertexnames=false}{hyperref}
+\documentclass[master,public,library,win,HSS,reportbody,oneside,AutoFakeBold]{def/buaa}
+\usepackage{tabularx}
 
-\title{硕士学位论文开题报告\\[1em]\large\TODO{论文题目}}
-\author{\TODO{姓名}\quad\TODO{学号}\\[0.5em]
-  指导教师：\TODO{导师姓名}\\[0.5em]
-  研究方向：\TODO{研究方向}}
-\date{\TODO{开题日期}}
+\IfFontExistsTF{STXingkai}
+  {\newCJKfontfamily\proposalcalligraphy{STXingkai}}
+  {\newCJKfontfamily\proposalcalligraphy{simkai.ttf}[Path=def/,AutoFakeBold=2]}
+
+% 统一正文及模板局部环境的行距。
+\setstretch{1.5}
+\let\reportoriginalspacing\spacing
+\renewcommand{\spacing}[1]{\reportoriginalspacing{1.5}}
+\makeatletter
+\pretocmd{\@makefntext}{\setstretch{1.5}}{}{}
+\makeatother
+
+\hypersetup{allcolors=black,pdfauthor={张彤},
+  pdftitle={弱连接交往对大学生价值观的影响及其应对策略研究}}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{2}
+\ctexset{
+  section = {name = {,、}, number = \chinese{section}, aftername = {}},
+  subsection = {name = {（,）}, number = \chinese{subsection}, aftername = {}},
+  subsubsection = {name = {,.}, number = \arabic{subsubsection},
+    format = \zihao{-4}\songti\bfseries\raggedright, aftername = \space},
+  paragraph = {name = {（,）}, number = \arabic{paragraph},
+    aftername = {}, runin = false, beforeskip = 0pt, afterskip = 0pt},
+}
 
 \begin{document}
-\hypersetup{pageanchor=false}
-\maketitle
 \thispagestyle{empty}
+\pdfbookmark[0]{中文封面}{proposal-cover}
+\begin{center}
+  \vspace*{2.5cm}
+  \includegraphics[width=0.5\linewidth]{def/logo-buaa}\par
+  \vspace{1cm}
+  \mbox{%
+    \includegraphics[width=0.57\linewidth]{def/head-master}%
+    \hspace{1em}%
+    \raisebox{0.35em}{\proposalcalligraphy\fontsize{30pt}{36pt}\selectfont
+      开\hspace{0.36em}题\hspace{0.36em}报\hspace{0.36em}告}%
+  }\par
+  \vspace{2.8cm}
+  {\fontsize{32pt}{38.4pt}\selectfont\songti\bfseries
+    弱连接交往对大学生价值观\\的影响及其应对策略研究\par}
+  \vspace{2cm}
+  {\zihao{4}\heiti
+    \begin{tabular}{ll}
+      作者姓名 & 张彤 \\
+      学科专业 & 思政教育 \\
+      指导教师 & 付丽莎 \\
+      培养学院 & 马克思主义学院
+    \end{tabular}\par}
+\end{center}
 \clearpage
 
 \pagenumbering{Roman}
-\hypersetup{pageanchor=true}
-\input{sections/abstract}
-\clearpage
-\tableofcontents
-\clearpage
+\pagestyle{plain}
+\pdfbookmark[0]{摘要}{proposal-abstract}
+{\zihao{3}\heiti\centerline{摘~~~~要}}
+\vspace{10pt}
 
+引导大学生自觉树立和践行社会主义核心价值观，是新时代高校落实立德树人根本任务的关键所在。随着社会分工细化与移动互联网普及，弱连接交往已成为当代大学生日常互动的重要形态。深入探究弱连接交往对大学生价值观的具体影响及其应对策略，对于提升流动社交环境下高校思想政治教育的针对性与实效性具有重要意义。
+
+本研究聚焦弱连接交往对大学生价值观的影响这一核心问题，坚持辩证唯物主义和历史唯物主义根本方法，综合运用文献研究与理论分析、网络文本挖掘与质性内容分析等方法，系统梳理了理论基础并构建了四维分析框架，拟依托多平台大学生网络文本考察弱连接交往中价值观负面偏移的现实表现，剖析其微观作用过程与深层成因，进而提出契合高校育人规律的系统应对策略。
+
+弱连接交往在拓宽信息视野、便利日常协作的同时，若逐步替代需要长期投入的深度交往，其彼此了解片面、责任约束较弱、关系易中断的特点，容易在日常生活中诱发攀比焦虑、学业功利、人际与亲属疏离以及公共表达片面化等问题，对马克思主义价值观和社会主义核心价值观培育造成现实冲击。面对新时代流动社交环境，高校思想政治教育应在尊重青年合理个人边界的前提下强化主流价值引领，通过夯实校园实体集体、增强思政课的现实针对性并协同家庭与社会育人资源，有效化解浅层交往的负面影响，引导大学生自觉认同并践行社会主义核心价值观。
+
+{\heiti\bfseries 关键词}：弱连接交往；价值观；思想政治教育
+\clearpage
+\fancypagestyle{fancy}{%
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[C]{\zihao{5}\thepage}
+}
+\makecontextlist
 \pagenumbering{arabic}
-\input{sections/introduction}
-\input{sections/research_status}
-\input{sections/research_plan}
-\input{sections/work_plan}
-\input{sections/references}
+\fancypagestyle{postref}{%
+  \fancyhead{}
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[C]{\zihao{5}\thepage}
+}
+
+\input{tex/introduction}
+\input{tex/research_status}
+\input{tex/research_plan}
+\input{tex/work_plan}
+
+\Bib{def/GBT7714-2015-NoWarning.bst}{ref.bib}
 \end{document}
