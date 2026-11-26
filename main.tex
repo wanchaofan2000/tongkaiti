@@ -1,7 +1,11 @@
 % !TeX program = xelatex
 \PassOptionsToPackage{hypertexnames=false}{hyperref}
-\documentclass[master,public,library,win,HSS,reportbody,oneside,AutoFakeBold]{def/buaa}
+\documentclass[master,public,library,win,HSS,reportbody,oneside,AutoFakeBold,biblatex]{def/buaa}
 \usepackage{tabularx}
+\usepackage[backend=biber,style=gb7714-2015,datamodel=def/report,gbnamefmt=uppercase,doi=false,
+  gbpub=false,maxbibnames=3,minbibnames=3,defernumbers=true]{biblatex}
+\addbibresource{ref.bib}
+\input{def/report-bibliography}
 
 \IfFontExistsTF{STXingkai}
   {\newCJKfontfamily\proposalcalligraphy{STXingkai}}
@@ -77,9 +81,10 @@
 \makecontextlist
 \pagenumbering{arabic}
 \fancypagestyle{postref}{%
-  \fancyhead{}
-  \renewcommand{\headrulewidth}{0pt}
-  \fancyfoot[C]{\zihao{5}\thepage}
+  \fancyhf{}
+  \fancyhead[C]{\songti\zihao{-5}\bibname}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \fancyfoot[C]{\fontsize{10.5bp}{16bp}\selectfont\thepage}
 }
 
 \input{tex/introduction}
@@ -87,5 +92,5 @@
 \input{tex/research_plan}
 \input{tex/work_plan}
 
-\Bib{def/GBT7714-2015-NoWarning.bst}{ref.bib}
+\PrintReportBibliography
 \end{document}

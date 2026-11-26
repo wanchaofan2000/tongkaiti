@@ -99,6 +99,8 @@
 \DeclareOption{HSS}{\gdef\@subjecttype{HSS}} % 社科及文学类
 \newif\ifbuaa@reportbody
 \DeclareOption{reportbody}{\buaa@reportbodytrue}
+\newif\ifbuaa@biblatex
+\DeclareOption{biblatex}{\buaa@biblatextrue}
 \DeclareOption{subjecttype}{\ClassWarning{buaa}{%
 		You have not specified the SUBJECTTYPE option. The word subjecttype should be replaced by one of the following thesis type: STEM, HSS.
 }}
@@ -189,7 +191,9 @@
 \RequirePackage[symbol*,perpage,marginal]{footmisc} % 重绘脚注编号
 \RequirePackage{color}        % To provide color for soul
 \RequirePackage{soul}         % To highlight text
-\RequirePackage[sort&compress]{natbib}              % BibTex
+\ifbuaa@biblatex\else
+	\RequirePackage[sort&compress]{natbib}
+\fi
 \DeclareGraphicsExtensions{.eps,.ps,.png,.jpg,.bmp,.pdf} % 声明使用图像格式
 \newcommand{\highlight}[1]{\colorbox{yellow}{#1}}   % 高亮注释
 
@@ -489,6 +493,8 @@ Extension = .ttc
 }
 
 % 设置参考文献格式
+\ifbuaa@biblatex\else
+\newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
 \usepackage{notoccite}
 % 设置编号字体和间距
 \renewcommand{\NAT@biblabelnum}[1]{%
@@ -503,13 +509,10 @@ Extension = .ttc
 \newcommand\bibstyle@authoryear{\bibpunct{(}{)}{;}{a}{,}{,}}
 \bibpunct{[}{]}{,}{n}{}{}
 \setlength{\bibsep}{0pt}
-\newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
 
 \ifthenelse{\equal{\@subjecttype}{HSS}}{%
 	\RequirePackage{bibentry}
-	\AtBeginDocument{\nobibliography*}
-	\newcounter{buaa@citefootnote}
-	\MakePerPage{buaa@citefootnote}
+	\AtBeginDocument{\begingroup\let\buaaBibGroup\@gobble\nobibliography*\endgroup}
 	\DeclareRobustCommand{\footcite}[1]{%
 		\edef\buaa@citekeys{\zap@space#1 \@empty}%
 		\@for\buaa@citekey:=\buaa@citekeys\do{%
@@ -517,17 +520,9 @@ Extension = .ttc
 	}
 	\newcommand{\buaa@footcite}[1]{%
 		\begingroup
-		% 正文上标显示文末文献编号，仍链接到当页脚注。
-		\@ifundefined{b@#1\@extra@b@citeb}{%
-			\def\buaa@bibnumber{?}%
-		}{%
-			\NAT@parse{#1}%
-			\edef\buaa@bibnumber{\NAT@num}%
-		}%
-		\def\@makefnmark{\textsuperscript{[\buaa@bibnumber]}}%
-		% 文献脚注按页编号，并独立于普通脚注计数。
-		\def\@mpfn{buaa@citefootnote}%
-		\def\thempfn{[\arabic{buaa@citefootnote}]}%
+		% 正文上标与页底文献脚注共用当页编号。
+		\def\thempfn{[\arabic{\@mpfn}]}%
+		\def\@makefnmark{\textsuperscript{\@thefnmark}}%
 		\footnote{%
 			\bibfont
 			% 文末条目保留引用锚点，脚注复用条目正文。
@@ -540,6 +535,7 @@ Extension = .ttc
 }{%
 	\newcommand{\footcite}[1]{\upcite{#1}}%
 }
+\fi
 
 % 设置PDF
 \hypersetup{%
@@ -1120,7 +1116,69 @@ Extension = .ttc
 	\pagestyle{postref}
 	\phantomsection
 	\addcontentsline{toc}{chapter}{参考文献}
-	\bibliography{#2}
+	\begingroup
+		\ifbuaa@reportbody\buaa@reportbiblayout\fi
+		\bibliography{#2}
+		\ifbuaa@reportbody\clearpage\fi
+	\endgroup
+}
+
+\newcommand{\buaa@reportbibpage}{%
+	\ctexset{chapter/beforeskip=15.8pt,chapter/afterskip=25.1pt}%
+	\addtolength{\headheight}{4bp}%
+	\addtolength{\headsep}{-4bp}%
+}
+\newcommand{\buaa@reportbibfont}{%
+	\setstretch{1}\songti\fontsize{10.5bp}{16bp}\selectfont
+	\interlinepenalty=10000\relax
+}
+\newcommand{\buaa@reportbiblayout}{%
+	\buaa@reportbibpage
+	\let\buaa@originalbibsection\bibsection
+	\renewcommand{\bibsection}{\buaa@originalbibsection\thispagestyle{postref}}%
+	\let\bibfont\buaa@reportbibfont
+	\renewcommand{\@biblabel}[1]{[##1]}%
+	\renewcommand{\@bibsetup}[1]{%
+		\setlength{\leftmargin}{21bp}%
+		\setlength{\labelwidth}{\leftmargin}%
+		\setlength{\labelsep}{0pt}%
+		\setlength{\itemsep}{3bp}%
+		\setlength{\parsep}{0pt}%
+		\renewcommand{\makelabel}[1]{\makebox[\labelwidth][l]{\hbox{####1}}}%
+	}%
+}
+
+\newcounter{buaa@bibgroup}
+\newif\ifbuaa@foreignrefs
+\newcommand{\buaa@bibheading}[2]{%
+	\par\addvspace{16.5bp}%
+	\item[]\leavevmode\hspace*{-\leftmargin}{\heiti\fontsize{#1}{16bp}\selectfont #2}\par
+	\nopagebreak[4]\addvspace{14.1bp}%
+}
+\newcommand{\buaa@bibmainheading}[1]{%
+	\stepcounter{buaa@bibgroup}%
+	\buaa@bibheading{14bp}{\zhnumber{\arabic{buaa@bibgroup}}、#1}%
+}
+\newcommand{\buaaBibGroup}[1]{%
+	\ifcase#1\relax
+	\or \buaa@bibmainheading{马克思主义经典文献}%
+	\or \buaa@bibmainheading{中文专著类文献}%
+	\or \buaa@bibmainheading{中文期刊类文献}%
+	\or \buaa@bibmainheading{报纸类文献}%
+	\or \buaa@bibmainheading{学位论文类文献}%
+	\or \buaa@bibmainheading{电子资源类文献}%
+	\else
+		\ifbuaa@foreignrefs\else
+			\buaa@bibmainheading{外文专著、文献及译著}%
+			\buaa@foreignrefstrue
+		\fi
+		\ifcase\numexpr#1-7\relax
+			\buaa@bibheading{12bp}{（一）外文专著}%
+		\or \buaa@bibheading{12bp}{（二）外文文献}%
+		\or \buaa@bibheading{12bp}{（三）译著}%
+		\fi
+	\fi
+	\setcounter{NAT@ctr}{0}%
 }
 
 \renewcommand{\appendix}{%

@@ -1,0 +1,118 @@
+% 将数据库的分类和排序字段交给 Biber，保留 ref.bib 原始数据。
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{\step[fieldsource=refsort,fieldtarget=sortkey]}
+    \map{\pertype{newspaper}\step[fieldset=refgroup,fieldvalue={4}]}
+    \map{\pertype{thesis}\pertype{mastersthesis}\pertype{phdthesis}
+      \step[fieldset=refgroup,fieldvalue={5}]}
+    \map{\pertype{online}\pertype{electronic}
+      \step[fieldset=refgroup,fieldvalue={6}]}
+    \map{\step[fieldsource=translator,final]\step[fieldset=refgroup,fieldvalue={9}]}
+    \map{\pertype{book}\step[fieldset=refgroup,fieldvalue={7}]}
+    \map{\step[fieldset=refgroup,fieldvalue={8}]}
+  }
+}
+\DeclareSortingTemplate{report}{
+  \sort[final]{\field{sortkey}}
+  \sort{\field{sortname}\field{author}\field{editor}\field{sorttitle}\field{title}}
+  \sort{\field{sortyear}\field{year}}
+  \sort{\field{sorttitle}\field{title}}
+  \sort{\field{entrykey}}
+}
+\ExecuteBibliographyOptions{sorting=report}
+
+% 中文条目使用范例的紧凑标点。外文姓名与著录单元保留空格。
+\newcommand*{\reportbibspace}{\iffieldequalstr{userd}{chinese}{}{\addspace}}
+\newcommand*{\reportbibcomma}{\addcomma\reportbibspace}
+\renewcommand*{\newunitpunct}{\addperiod\reportbibspace}
+\renewcommand*{\subtitlepunct}{\addcolon\reportbibspace}
+\renewcommand*{\publocpunct}{\addcolon\reportbibspace}
+\renewcommand*{\pubdatadelim}{\setunit*{\reportbibcomma}}
+\renewcommand*{\bibpagespunct}{\addcolon}
+\DeclareDelimFormat[bib,biblist]{multinamedelim}{\reportbibcomma}
+\DeclareDelimFormat[bib,biblist]{finalnamedelim}{\reportbibcomma}
+\DeclareDelimFormat[bib,biblist]{andothersdelim}{%
+  \iffieldequalstr{userd}{chinese}{}{\addcomma\addspace}}
+\DeclareDelimFormat{titletypedelim}{\nobreak}
+\expandafter\patchcmd\csname abx@macro@journal+issuetitle\endcsname
+  {\setunit*{\addcomma\addspace}}{\setunit*{\reportbibcomma}}{}%
+  {\PackageError{report-bibliography}{Cannot set journal punctuation}{}}
+\expandafter\patchcmd\csname abx@macro@journal+issuetitle\endcsname
+  {\setunit*{\addcomma\space}}{\setunit*{\reportbibcomma}}{}%
+  {\PackageError{report-bibliography}{Cannot set volume punctuation}{}}
+
+% DOI 保留在数据里。排版时也避免仅凭 DOI 追加 /OL。
+\AtEveryBibitem{\clearfield{doi}}
+\AtEveryCitekey{\clearfield{doi}}
+\AtBeginBibliography{\interlinepenalty=10000\relax}
+
+\forcsvlist{\DeclareBibliographyCategory}{ref1,ref2,ref3,ref4,ref5,ref6,ref7,ref8,ref9}
+\AtDataInput{%
+  \iffieldundef{refgroup}{}{%
+    \csgdef{reportbibgroup@\thefield{refgroup}}{}%
+    \addtocategory{ref\thefield{refgroup}}{\thefield{entrykey}}%
+  }%
+}
+
+\makeatletter
+% 脚注的完整著录复用文末的作者人数与姓名分隔符。
+\DeclareCiteCommand{\report@fullcite}
+  {\defcounter{maxnames}{\blx@maxbibnames}%
+   \defcounter{minnames}{\blx@minbibnames}%
+   \usebibmacro{prenote}}
+  {\usedriver{\delimcontext{bib}\DeclareNameAlias{sortname}{default}}{\thefield{entrytype}}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\newcommand{\report@footcite}[1]{%
+  \begingroup
+    \setlength{\footnotesep}{8.5bp}%
+    \def\thempfn{[\arabic{\@mpfn}]}%
+    \def\@makefnmark{\textsuperscript{\@thefnmark}}%
+    \footnote{\songti\fontsize{10.5pt}{10.5pt}\selectfont\report@fullcite{#1}.}%
+  \endgroup
+}
+\renewrobustcmd*{\footcite}[1]{\forcsvlist{\report@footcite}{#1}}
+
+\defbibenvironment{report}
+  {\list{\mkbibbrackets{\printfield{labelnumber}}}{%
+    \setlength{\leftmargin}{21bp}%
+    \setlength{\labelwidth}{\leftmargin}%
+    \setlength{\labelsep}{0pt}%
+    \setlength{\itemsep}{0pt}%
+    \setlength{\parsep}{0pt}%
+    \setlength{\topsep}{0pt}%
+    \setlength{\partopsep}{0pt}%
+    \renewcommand*{\makelabel}[1]{\makebox[\labelwidth][l]{##1}}%
+  }}
+  {\endlist}
+  {\item}
+
+\defbibfilter{reportbooks}{category=ref1 or category=ref2 or category=ref9}
+\defbibfilter{reportforeign}{category=ref7 or category=ref8}
+
+\newcommand{\report@bibgroup}[2]{%
+  \subsection{#1}%
+  \printbibliography[heading=none,env=report,resetnumbers=true,#2]%
+}
+\newcommand{\PrintReportBibliography}{%
+  \clearpage
+  \begingroup
+    \buaa@reportbibpage
+    \pagestyle{postref}%
+    \section{主要参考文献}%
+    \thispagestyle{postref}%
+    \renewcommand*{\bibfont}{\setstretch{1.5}\normalfont\songti\fontsize{10.5bp}{12bp}\selectfont}%
+    \ifboolexpr{test {\ifcsdef{reportbibgroup@1}}
+      or test {\ifcsdef{reportbibgroup@2}} or test {\ifcsdef{reportbibgroup@9}}}
+      {\report@bibgroup{专著}{filter=reportbooks}}{}%
+    \ifcsdef{reportbibgroup@3}{\report@bibgroup{期刊论文}{category=ref3}}{}%
+    \ifcsdef{reportbibgroup@4}{\report@bibgroup{报纸文章}{category=ref4}}{}%
+    \ifboolexpr{test {\ifcsdef{reportbibgroup@7}} or test {\ifcsdef{reportbibgroup@8}}}
+      {\report@bibgroup{外文文献}{filter=reportforeign}}{}%
+    \ifcsdef{reportbibgroup@5}{\report@bibgroup{学位论文}{category=ref5}}{}%
+    \ifcsdef{reportbibgroup@6}{\report@bibgroup{电子资源}{category=ref6}}{}%
+    \clearpage
+  \endgroup
+}
+\makeatother

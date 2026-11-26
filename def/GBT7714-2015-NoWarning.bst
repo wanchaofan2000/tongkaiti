@@ -46,6 +46,8 @@ ENTRY
     organization
     pages
     publisher
+    refgroup
+    refsort
     school
     series
     title
@@ -57,7 +59,7 @@ ENTRY
     year
   }
   { entry.lang }
-  { label extra.label sort.label short.list entry.mark }
+  { label extra.label sort.label short.list entry.mark ref.group }
 
 INTEGERS { output.state before.all mid.sentence after.sentence after.block after.slash }
 
@@ -77,7 +79,8 @@ FUNCTION {init.state.consts}
   #1 'lang.ru :=
 }
 
-STRINGS { s t }
+STRINGS { s t last.refgroup }
+INTEGERS { grouped.refs }
 
 FUNCTION {debug}
 { 's :=
@@ -564,6 +567,12 @@ FUNCTION {make.full.names}
 
 FUNCTION {output.bibitem}
 { newline$
+  grouped.refs #1 = ref.group last.refgroup = not and
+    { "\buaaBibGroup{" ref.group * "}" * write$ newline$
+      ref.group 'last.refgroup :=
+    }
+    'skip$
+  if$
   "\bibitem[" write$
   label write$
   ")" make.full.names duplicate$ short.list =
@@ -1254,6 +1263,8 @@ FUNCTION {dataset}
   misc
 }
 
+FUNCTION {electronic} { misc }
+
 FUNCTION {inbook} { book }
 
 FUNCTION {inproceedings}
@@ -1527,8 +1538,41 @@ FUNCTION {int.to.fix}
   #-1 #10 substring$
 }
 
+FUNCTION {reference.group}
+{ refgroup empty$ not
+    { refgroup }
+    { type$ "newspaper" = mark field.or.null "N" = or
+        { "4" }
+        { type$ "mastersthesis" = type$ "phdthesis" = or mark field.or.null "D" = or
+            { "5" }
+            { type$ "online" = type$ "electronic" = or mark field.or.null "EB" = or
+                { "6" }
+                { translator empty$ not
+                    { "9" }
+                    { entry.lang lang.zh =
+                        { journal empty$ { "2" } { "3" } if$ }
+                        { journal empty$ type$ "incollection" = not and
+                            { "7" } { "8" } if$ }
+                      if$
+                    }
+                  if$
+                }
+              if$
+            }
+          if$
+        }
+      if$
+    }
+  if$
+}
+
 FUNCTION {presort}
 { set.entry.lang
+  reference.group 'ref.group :=
+  refgroup empty$ refsort empty$ and not
+    { #1 'grouped.refs := }
+    'skip$
+  if$
   calc.label
   label sortify
   "    "
@@ -1593,7 +1637,24 @@ ITERATE {forward.pass}
 REVERSE {reverse.pass}
 
 FUNCTION {bib.sort.order}
-{ sort.label  'sort.key$ :=
+{ grouped.refs #1 =
+    { ref.group " " *
+      refsort empty$
+        { author empty$
+            { key empty$ { title field.or.null } { key } if$ }
+            { author #1 "{vv }{ll}{ ff}" format.name$ }
+          if$
+        }
+        { refsort }
+      if$
+      sortify *
+      " " * year field.or.null *
+      " " * cite$ *
+      #1 entry.max$ substring$
+    }
+    { sort.label }
+  if$
+  'sort.key$ :=
 }
 
 ITERATE {bib.sort.order}
@@ -1609,6 +1670,12 @@ FUNCTION {begin.bib}
   write$ newline$
   "\providecommand{\natexlab}[1]{#1}"
   write$ newline$
+  grouped.refs #1 =
+    { "\providecommand{\buaaBibGroup}[1]{}" write$ newline$
+      "" 'last.refgroup :=
+    }
+    'skip$
+  if$
   "\providecommand{\url}[1]{#1}"
   write$ newline$
   "\providecommand{\href}[2]{\url{#2}}"
